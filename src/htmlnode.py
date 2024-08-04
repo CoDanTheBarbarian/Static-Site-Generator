@@ -19,7 +19,7 @@ class HTMLNode:
     def __repr__(self):
         props_text = self.props_to_html() if self.props else "{}"
         children_text = "[" + ", ".join(repr(child) for child in self.children) + "]"
-        return f'HTMLNode(tag="{self.tag}", value="{self.value}", children={children_text}, props={props_text})'
+        return f'HTMLNode(tag="{self.tag}", value="{self.value}", children: {children_text}, props={props_text})'
     
 """
 This is the way it was done in the solution code.
