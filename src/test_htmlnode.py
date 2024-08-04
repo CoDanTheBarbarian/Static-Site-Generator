@@ -3,13 +3,6 @@ import unittest
 from htmlnode import HTMLNode
 
 class TestHTMLNode(unittest.TestCase):
-    def test_empty_child(self):
-        node = HTMLNode(tag="tag", value="parent")
-        self.assertIsInstance(node.children, list)
-
-    def test_empty_props(self):
-        node = HTMLNode(tag="tag", value="parent")
-        self.assertIsInstance(node.props, dict)
 
     def test_props_to_html(self):
         node = HTMLNode(tag="tag", value="parent", props={"class": "container", "id": "kernel"})
@@ -17,14 +10,20 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual(method_output, ' class="container" id="kernel"')
     
 
-    def test_repr(self):
-        child_node_1 = HTMLNode(tag="tag", value="child_1")
-        child_node_2 = HTMLNode(tag="tag", value="child_2")
-        node = HTMLNode(tag="tag", value="parent", children=[child_node_1, child_node_2], props={"class": "container", "id": "kernel"})
-        node_text = repr(node)
-        self.assertEqual(node_text, 
-                         'HTMLNode(tag="tag", value="parent", children=[HTMLNode(tag="tag", value="child_1", children=[], props={}), HTMLNode(tag="tag", value="child_2", children=[], props={})], props= class="container" id="kernel")')
+    def test_values(self):
+        node = HTMLNode("tag", "parent")
+        
+        self.assertEqual(node.tag, "tag")
+        self.assertEqual(node.value, "parent")
+        self.assertEqual(node.children, None)
+        self.assertEqual(node.props, None)
 
+    def test_repr(self):
+        node = HTMLNode("tag", "parent", None, props={"class": "container", "id": "kernel"})
+        node_2 = HTMLNode("tag", "parent", ['child_1', 'child_2'], None)
+        
+        self.assertEqual(repr(node), "HTMLNode(tag, parent, children: None, {'class': 'container', 'id': 'kernel'})")
+        self.assertEqual(repr(node_2), "HTMLNode(tag, parent, children: ['child_1', 'child_2'], None)")
 
 if __name__ == "__main__":
     unittest.main()
