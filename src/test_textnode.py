@@ -1,6 +1,7 @@
 import unittest
 
-from textnode import TextNode, text_type_bold, text_type_code, text_type_image, text_type_italic, text_type_link, text_type_text
+from textnode import TextNode, text_type_bold, text_type_code, text_type_image, text_type_italic, text_type_link, text_type_text, text_node_to_html_node
+from htmlnode import LeafNode
 
 
 class TestTextNode(unittest.TestCase):
@@ -35,6 +36,29 @@ class TestTextNode(unittest.TestCase):
             "TextNode(This is a text node, text, https://www.boot.dev)", repr(node)
         )
 
+    def test_text_to_html(self):
+        text_node = TextNode("text", text_type_text)
+        self.assertEqual(text_node_to_html_node(text_node), LeafNode(None, "text"))
+        
+        bold_node = TextNode("text", text_type_bold)
+        self.assertEqual(text_node_to_html_node(bold_node), LeafNode("b", "text"))
+
+        italic_node = TextNode("text", text_type_italic)
+        self.assertEqual(text_node_to_html_node(italic_node), LeafNode("i", "text"))
+        
+        code_node = TextNode("text", text_type_code)
+        self.assertEqual(text_node_to_html_node(code_node), LeafNode("code", "text"))
+
+        link_node = TextNode("text", text_type_link, "boot.dev")
+        self.assertEqual(text_node_to_html_node(link_node), LeafNode("a", "text", {"href": "boot.dev"}))
+        
+        image_node = TextNode("text", text_type_image, "image.com")
+        self.assertEqual(text_node_to_html_node(image_node), LeafNode("img", "", {"src": "image.com", "alt": "text"}))
+
+        with self.assertRaises(Exception) as context:
+            unsupported_type = TextNode("text", None)
+            text_node_to_html_node(unsupported_type)
+        self.assertEqual(str(context.exception), "None text type unsupported")
 
 if __name__ == "__main__":
     unittest.main()
