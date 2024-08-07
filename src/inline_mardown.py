@@ -32,3 +32,53 @@ def extract_markdown_links(text):
     pattern = r"(?<!!)\[(.*?)\]\((.*?)\)"
     matches = re.findall(pattern, text)
     return matches
+
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        image_extraction = extract_markdown_images(old_node.text)
+        if not image_extraction:
+            new_nodes.append(old_node)
+            continue
+        collected_nodes = []
+        updated_node_text = old_node.text
+        for image_alt, image_url in image_extraction:
+            split_text = updated_node_text.split(f"![{image_alt}]({image_url})", 1)
+            if len(split_text) != 2:
+                raise ValueError("Invalid markdown, image section not closed")
+            if split_text[0] == "":
+                collected_nodes.append(TextNode(image_alt, text_type_image, image_url))
+                updated_node_text = split_text[1]
+            else:
+                collected_nodes.append(TextNode(split_text[0], text_type_text))
+                collected_nodes.append(TextNode(image_alt, text_type_image, image_url))
+                updated_node_text = split_text[1]
+        if updated_node_text != "":
+            collected_nodes.append(TextNode(updated_node_text, text_type_text))
+        new_nodes.extend(collected_nodes)
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        link_extraction = extract_markdown_links(old_node.text)
+        if not link_extraction:
+            new_nodes.append(old_node)
+            continue
+        collected_nodes = []
+        updated_node_text = old_node.text
+        for anchor_text, link_url in link_extraction:
+            split_text = updated_node_text.split(f"[{anchor_text}]({link_url})", 1)
+            if len(split_text) != 2:
+                raise ValueError("Invalid markdown, link section not closed")
+            if split_text[0] == "":
+                collected_nodes.append(TextNode(anchor_text, text_type_link, link_url))
+                updated_node_text = split_text[1]
+            else:
+                collected_nodes.append(TextNode(split_text[0], text_type_text))
+                collected_nodes.append(TextNode(anchor_text, text_type_link, link_url))
+                updated_node_text = split_text[1]
+        if updated_node_text != "":
+            collected_nodes.append(TextNode(updated_node_text, text_type_text))
+        new_nodes.extend(collected_nodes)
+    return new_nodes
