@@ -1,5 +1,5 @@
 import unittest
-from inline_mardown import split_nodes_delimiter
+from inline_mardown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 from textnode import TextNode, text_type_bold, text_type_code, text_type_text, text_type_italic
 
 class TestInlineMardown(unittest.TestCase):
@@ -49,6 +49,16 @@ class TestInlineMardown(unittest.TestCase):
             TextNode("italic text", text_type_italic),
             TextNode(" in it", text_type_text)
         ])
+
+    def test_image_extraction(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        extraction = extract_markdown_images(text)
+        self.assertEqual(extraction, [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")])
+
+    def test_link_extraction(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        extraction = extract_markdown_links(text)
+        self.assertEqual(extraction, [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")])
 
 if __name__ == "__main__":
     unittest.main()
