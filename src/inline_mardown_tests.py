@@ -1,5 +1,5 @@
 import unittest
-from inline_mardown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
+from inline_mardown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_text_nodes
 from textnode import TextNode, text_type_bold, text_type_code, text_type_text, text_type_italic, text_type_link, text_type_image, text_node_to_html_node
 
 class TestInlineMardown(unittest.TestCase):
@@ -85,5 +85,42 @@ class TestInlineMardown(unittest.TestCase):
             TextNode("obi wan", text_type_image, "https://i.imgur.com/fJRm4Vk.jpeg")
         ])
 
+    def test_text_to_nodes(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        node_list = text_to_text_nodes(text)
+        self.assertEqual(node_list, [
+            TextNode("This is ", text_type_text),
+            TextNode("text", text_type_bold),
+            TextNode(" with an ", text_type_text),
+            TextNode("italic", text_type_italic),
+            TextNode(" word and a ", text_type_text),
+            TextNode("code block", text_type_code),
+            TextNode(" and an ", text_type_text),
+            TextNode("obi wan image", text_type_image, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", text_type_text),
+            TextNode("link", text_type_link, "https://boot.dev"),
+            ])
+        
+    def test_text_to_nodes_missing_bold(self):
+        text = "This is text with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        node_list = text_to_text_nodes(text)
+        self.assertEqual(node_list, [
+            TextNode("This is text with an ", text_type_text),
+            TextNode("italic", text_type_italic),
+            TextNode(" word and a ", text_type_text),
+            TextNode("code block", text_type_code),
+            TextNode(" and an ", text_type_text),
+            TextNode("obi wan image", text_type_image, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", text_type_text),
+            TextNode("link", text_type_link, "https://boot.dev"),
+            ])
+        
+    def test_text_to_nodes_delimiter_error(self):
+        text = "This is **text with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        
+        with self.assertRaises(ValueError) as context:
+            node_list = text_to_text_nodes(text)
+        self.assertEqual(str(context.exception), "no closing delimiter found")
+        
 if __name__ == "__main__":
     unittest.main()
