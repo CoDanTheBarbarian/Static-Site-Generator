@@ -119,8 +119,8 @@ class TestInlineMardown(unittest.TestCase):
         text = "This is **text with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         
         with self.assertRaises(ValueError) as context:
-            node_list = text_to_text_nodes(text)
+            text_to_text_nodes(text)
         self.assertEqual(str(context.exception), "no closing delimiter found")
-        
+
 if __name__ == "__main__":
     unittest.main()
