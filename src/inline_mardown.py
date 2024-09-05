@@ -1,5 +1,13 @@
-from textnode import TextNode, text_type_bold, text_node_to_html_node, text_type_code, text_type_image, text_type_italic, text_type_link, text_type_text
 import re
+from textnode import (
+    TextNode,
+    text_type_text,
+    text_type_bold,
+    text_type_italic,
+    text_type_code,
+    text_type_image,
+    text_type_link,
+)
 
 def text_to_text_nodes(text):
      nodes = [TextNode(text, text_type_text)]
@@ -79,7 +87,7 @@ def split_nodes_link(old_nodes):
         for anchor_text, link_url in link_extraction:
             split_text = updated_node_text.split(f"[{anchor_text}]({link_url})", 1)
             if len(split_text) != 2:
-                raise ValueError("Invalid markdown, image section not closed")
+                raise ValueError("Invalid markdown, link section not closed")
             if split_text[0] != "":
                 new_nodes.append(TextNode(split_text[0], text_type_text))
             new_nodes.append(TextNode(anchor_text, text_type_link, link_url))
