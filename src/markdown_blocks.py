@@ -16,7 +16,8 @@ def markdown_to_blocks(markdown):
     for block in blocks:
         if block == "":
             continue
-        filtered_blocks.append(block.strip())
+        block = block.strip()
+        filtered_blocks.append(block)
     return filtered_blocks
 
 def block_to_block_type(block):
@@ -96,12 +97,12 @@ def heading_to_htmlnode(block):
     return ParentNode(f"h{i}", children)
 
 def code_to_htmlnode(block):
-    if not block.startswith("```") and not block.endswith("```"):
+    if not block.startswith("```") or not block.endswith("```"):
         raise ValueError("Invalid code block")
     text = block[4: -3]
     children = text_to_children(text)
     code = ParentNode("code", children)
-    return ParentNode("pre", code)
+    return ParentNode("pre", [code])
 
 def quote_to_htmlnode(block):
     lines = block.split("\n")

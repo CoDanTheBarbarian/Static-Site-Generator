@@ -1,8 +1,19 @@
-from textnode import TextNode, text_type_bold, text_type_link, text_type_code, text_type_image, text_type_italic, text_type_text
+import os
+import shutil
+
+from copystatic import recursive_file_copy
+
+dir_path_static = "/root/workspace/github.com/CoDanTheBarbarian/static_site_generator/static"
+dir_path_public = "/root/workspace/github.com/CoDanTheBarbarian/static_site_generator/public"
 
 def main():
-    test_node = TextNode("this is a text node", text_type_bold, "https://boot.dev")
-    print(test_node)
+    print("Deleting public files...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
+    
+    print("Copying static files to public directory...")
+    recursive_file_copy(dir_path_static, dir_path_public)
+
 
 if __name__ == "__main__":
     main()
