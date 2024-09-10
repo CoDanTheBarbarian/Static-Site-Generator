@@ -2,7 +2,7 @@ import os
 import shutil
 
 from copystatic import recursive_file_copy
-from generate_page import generate_page
+from generate_page import generate_pages_recursive
 
 dir_path_static = "/root/workspace/github.com/CoDanTheBarbarian/static_site_generator/static"
 dir_path_public = "/root/workspace/github.com/CoDanTheBarbarian/static_site_generator/public"
@@ -18,11 +18,7 @@ def main():
     recursive_file_copy(dir_path_static, dir_path_public)
 
     print("Generating page...")
-    generate_page(
-        os.path.join(dir_path_content, "index.md"), 
-        template_path, 
-        os.path.join(dir_path_public, "index.html")
-        )
+    generate_pages_recursive(dir_path_content, template_path, dir_path_public)
 
 
 
